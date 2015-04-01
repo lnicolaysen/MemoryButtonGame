@@ -22,6 +22,10 @@ public class ButtonSequence {
         return seq;
     }
 
+    public int get(int index){
+        return seq.get(index);
+    }
+
     public void randomize() {
         Collections.shuffle(seq);
     }
