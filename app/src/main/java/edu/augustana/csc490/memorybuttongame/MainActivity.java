@@ -11,22 +11,36 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity {
 
-    Button button1, button2, button3, button4, button5, button6, button7, button8, button9;
     int device_width;
     Display display;
     Point size;
     int button_width;
     int buttonColor;
+    int clickedColor;
+    Button[] buttons;
     int sequence_index;
+    TextView description;
+    Button playAgain;
     ButtonSequence bSeq;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        description = (TextView) findViewById(R.id.textView);
+        buttonColor = Color.argb(255, 255, 119, 89);
+        clickedColor = Color.LTGRAY;
+        sequence_index = 0;
+
+        //create play again button
+        playAgain = (Button) findViewById(R.id.button);
+        playAgain.setVisibility(View.INVISIBLE);
+        playAgain.setOnClickListener(playAgainListener);
 
         //get device width
         display = getWindowManager().getDefaultDisplay();
@@ -34,89 +48,86 @@ public class MainActivity extends ActionBarActivity {
         display.getSize(size);
         device_width = size.x;
 
-        buttonColor = Color.argb(255, 255, 119, 89);
-        sequence_index = 0;
-        //create buttons
-        //set button width to fit any size screen
+        //create buttons and add to @buttons array
+        buttons = new Button[9];
         button_width = device_width / 3 - 30;
-        button1 = (Button) findViewById(R.id.button1);
-        button2 = (Button) findViewById(R.id.button2);
-        button3 = (Button) findViewById(R.id.button3);
-        button4 = (Button) findViewById(R.id.button4);
-        button5 = (Button) findViewById(R.id.button5);
-        button6 = (Button) findViewById(R.id.button6);
-        button7 = (Button) findViewById(R.id.button7);
-        button8 = (Button) findViewById(R.id.button8);
-        button9 = (Button) findViewById(R.id.button9);
+        buttons[0] = (Button) findViewById(R.id.button1);
+        buttons[1] = (Button) findViewById(R.id.button2);
+        buttons[2] = (Button) findViewById(R.id.button3);
+        buttons[3] = (Button) findViewById(R.id.button4);
+        buttons[4] = (Button) findViewById(R.id.button5);
+        buttons[5] = (Button) findViewById(R.id.button6);
+        buttons[6] = (Button) findViewById(R.id.button7);
+        buttons[7] = (Button) findViewById(R.id.button8);
+        buttons[8] = (Button) findViewById(R.id.button9);
 
-        button1.setWidth(button_width);
-        button2.setWidth(button_width);
-        button3.setWidth(button_width);
-        button4.setWidth(button_width);
-        button5.setWidth(button_width);
-        button6.setWidth(button_width);
-        button7.setWidth(button_width);
-        button8.setWidth(button_width);
-        button9.setWidth(button_width);
-        //create and set click listener
+        //set button width to fit any size screen
+        //set click listener
+        for(Button b: buttons){
+            b.setWidth(button_width);
+            b.setOnClickListener(buttonListener);
+        }
 
-        button1.setOnClickListener(buttonListener);
-        button2.setOnClickListener(buttonListener);
-        button3.setOnClickListener(buttonListener);
-        button4.setOnClickListener(buttonListener);
-        button5.setOnClickListener(buttonListener);
-        button6.setOnClickListener(buttonListener);
-        button7.setOnClickListener(buttonListener);
-        button8.setOnClickListener(buttonListener);
-        button9.setOnClickListener(buttonListener);
-
-        //get and test sequence
+        //get and test description
         bSeq = new ButtonSequence();
-        String s = bSeq.toString();
-        Log.d("gameTag", s);
-
+       // String s = bSeq.toString();
+       // Log.d("gameTag", s);
     }
 
     View.OnClickListener buttonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            v.setBackgroundColor(clickedColor);
             checkMove(v);
-            //restart if not
-            //increment if yes
-            v.setBackgroundColor(Color.DKGRAY);
 
         }
     };
-    //set button colors back, reset point reached in sequence to 0
+
+    View.OnClickListener playAgainListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            reset();
+            bSeq.randomize();
+            for(Button btn : buttons){
+                btn.setVisibility(View.VISIBLE);
+                }
+            playAgain.setVisibility(View.INVISIBLE);
+            description.setText(R.string.description);
+        }
+    };
+    //set button colors back, reset point reached in description to 0
     public void reset() {
-        button1.setBackgroundColor(buttonColor);
-        button2.setBackgroundColor(buttonColor);
-        button3.setBackgroundColor(buttonColor);
-        button4.setBackgroundColor(buttonColor);
-        button5.setBackgroundColor(buttonColor);
-        button6.setBackgroundColor(buttonColor);
-        button7.setBackgroundColor(buttonColor);
-        button8.setBackgroundColor(buttonColor);
-        button9.setBackgroundColor(buttonColor);
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        for(Button btn : buttons)
+        {btn.setBackgroundColor(buttonColor);
+        }
         sequence_index=0;
     }
 
 
     public void increment(){
-        sequence_index++;
+        if(sequence_index <8) {
+            sequence_index++;
+        }else{
+            win();
+        }
     }
 
     public void checkMove(View v){
         Resources res = v.getResources();
         String id = res.getResourceEntryName(v.getId());
         String current = "button" + bSeq.get(sequence_index);
-
-        if(id == current){
+        Log.d("Game", id);
+        Log.d("Game", current);
+        if(id.compareTo(current) == 0){
             increment();
         }else{
             reset();
         }
-
     }
 
 
@@ -126,6 +137,18 @@ public class MainActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
+    public void win(){
+for(Button btn : buttons){
+    btn.setVisibility(View.INVISIBLE);
+}
+description.setText("You win!");
+playAgain.setVisibility(View.VISIBLE);
+
+    }
+
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

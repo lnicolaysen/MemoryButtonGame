@@ -93,4 +93,14 @@
         android:layout_column="2"
         android:background="#ffff7456" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play Again?"
+        android:id="@+id/button"
+        android:layout_row="4"
+        android:layout_column="0"
+        android:layout_columnSpan="3"
+        android:layout_gravity="center_horizontal" />
+
 </GridLayout>
