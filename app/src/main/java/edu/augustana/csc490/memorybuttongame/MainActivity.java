@@ -11,31 +11,48 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.Date;
+import java.util.Timer;
 
 
 public class MainActivity extends ActionBarActivity {
 
-    int device_width;
+    int device_width, button_width, buttonColor, clickedColor, sequence_index;
     Display display;
+    Chronometer timer;
     Point size;
-    int button_width;
-    int buttonColor;
-    int clickedColor;
+    ImageView img;
     Button[] buttons;
-    int sequence_index;
-    TextView description;
+    TextView description, time;
     Button playAgain;
     ButtonSequence bSeq;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sequence_index = 0;
         description = (TextView) findViewById(R.id.textView);
+
+       //create colors
         buttonColor = Color.argb(255, 255, 119, 89);
         clickedColor = Color.LTGRAY;
-        sequence_index = 0;
+
+        //create hidden winning image
+        img = (ImageView) findViewById(R.id.imageView);
+        img.setVisibility(View.GONE);
+
+        //create and start timer
+        timer = (Chronometer) findViewById(R.id.chronometer);
+        timer.start();
+
+        time = (TextView) findViewById(R.id.textView2);
+        time.setVisibility(View.INVISIBLE);
 
         //create play again button
         playAgain = (Button) findViewById(R.id.button);
@@ -63,9 +80,9 @@ public class MainActivity extends ActionBarActivity {
 
         //set button width to fit any size screen
         //set click listener
-        for(Button b: buttons){
-            b.setWidth(button_width);
-            b.setOnClickListener(buttonListener);
+        for(Button btn: buttons){
+            btn.setWidth(button_width);
+            btn.setOnClickListener(buttonListener);
         }
 
         //get and test description
@@ -97,15 +114,15 @@ public class MainActivity extends ActionBarActivity {
     };
     //set button colors back, reset point reached in description to 0
     public void reset() {
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        //delay before resetting color - better way?
+        long start = new Date().getTime();
+        while(new Date().getTime() - start < 200L){}
+
         for(Button btn : buttons)
         {btn.setBackgroundColor(buttonColor);
         }
         sequence_index=0;
+
     }
 
 
@@ -129,7 +146,17 @@ public class MainActivity extends ActionBarActivity {
             reset();
         }
     }
+    public void win(){
+        for(Button btn : buttons){
+            btn.setVisibility(View.INVISIBLE);
+        }
+        description.setVisibility(View.INVISIBLE);
+        playAgain.setVisibility(View.VISIBLE);
+        img.setVisibility(View.VISIBLE);
+        timer.stop();
+        time.setVisibility(View.VISIBLE);
 
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -138,14 +165,7 @@ public class MainActivity extends ActionBarActivity {
         return true;
     }
 
-    public void win(){
-for(Button btn : buttons){
-    btn.setVisibility(View.INVISIBLE);
-}
-description.setText("You win!");
-playAgain.setVisibility(View.VISIBLE);
 
-    }
 
 
 
