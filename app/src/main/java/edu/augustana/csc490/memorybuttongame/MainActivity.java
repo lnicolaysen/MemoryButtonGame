@@ -3,6 +3,8 @@ package edu.augustana.csc490.memorybuttongame;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.os.SystemClock;
+import android.provider.CalendarContract;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,7 +32,7 @@ public class MainActivity extends ActionBarActivity {
     TextView description, time;
     Button playAgain;
     ButtonSequence bSeq;
-
+    Color[] colors;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +40,7 @@ public class MainActivity extends ActionBarActivity {
 
         sequence_index = 0;
         description = (TextView) findViewById(R.id.textView);
+
 
        //create colors
         buttonColor = Color.argb(255, 255, 119, 89);
@@ -52,7 +55,7 @@ public class MainActivity extends ActionBarActivity {
         timer.start();
 
         time = (TextView) findViewById(R.id.textView2);
-        time.setVisibility(View.INVISIBLE);
+
 
         //create play again button
         playAgain = (Button) findViewById(R.id.button);
@@ -106,8 +109,10 @@ public class MainActivity extends ActionBarActivity {
             reset();
             bSeq.randomize();
             for(Button btn : buttons){
-                btn.setVisibility(View.VISIBLE);
+                btn.setEnabled(true);
                 }
+            timer.setBase(SystemClock.elapsedRealtime());
+            timer.start();
             playAgain.setVisibility(View.INVISIBLE);
             description.setText(R.string.description);
         }
@@ -116,11 +121,11 @@ public class MainActivity extends ActionBarActivity {
     public void reset() {
         //delay before resetting color - better way?
         long start = new Date().getTime();
-        while(new Date().getTime() - start < 200L){}
-
+        while(new Date().getTime() - start < 200){}
         for(Button btn : buttons)
         {btn.setBackgroundColor(buttonColor);
         }
+
         sequence_index=0;
 
     }
@@ -148,13 +153,12 @@ public class MainActivity extends ActionBarActivity {
     }
     public void win(){
         for(Button btn : buttons){
-            btn.setVisibility(View.INVISIBLE);
+            btn.setEnabled(false);
         }
-        description.setVisibility(View.INVISIBLE);
+
         playAgain.setVisibility(View.VISIBLE);
-        img.setVisibility(View.VISIBLE);
         timer.stop();
-        time.setVisibility(View.VISIBLE);
+
 
     }
 
