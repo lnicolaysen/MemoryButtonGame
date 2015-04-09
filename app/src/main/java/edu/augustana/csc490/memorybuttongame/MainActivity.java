@@ -23,7 +23,7 @@ import java.util.Timer;
 
 public class MainActivity extends ActionBarActivity {
 
-    int device_width, button_width, buttonColor, clickedColor, sequence_index;
+    int device_width, button_width,button_height, buttonColor, clickedColor, sequence_index;
     Display display;
     Chronometer timer;
     Point size;
@@ -70,7 +70,8 @@ public class MainActivity extends ActionBarActivity {
 
         //create buttons and add to @buttons array
         buttons = new Button[9];
-        button_width = device_width / 3 - 30;
+        button_width = (device_width - 122)/3;
+        button_height = (int) (button_width * 0.6);
         buttons[0] = (Button) findViewById(R.id.button1);
         buttons[1] = (Button) findViewById(R.id.button2);
         buttons[2] = (Button) findViewById(R.id.button3);
@@ -85,6 +86,7 @@ public class MainActivity extends ActionBarActivity {
         //set click listener
         for(Button btn: buttons){
             btn.setWidth(button_width);
+            btn.setHeight(button_height);
             btn.setOnClickListener(buttonListener);
         }
 
