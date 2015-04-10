@@ -121,9 +121,6 @@ public class MainActivity extends ActionBarActivity {
     };
     //set button colors back, reset point reached in description to 0
     public void reset() {
-        //delay before resetting color - better way?
-        long start = new Date().getTime();
-        while(new Date().getTime() - start < 200){}
         for(Button btn : buttons)
         {btn.setBackgroundColor(buttonColor);
         }
